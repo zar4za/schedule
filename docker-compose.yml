@@ -1,0 +1,40 @@
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]  # AOF for durability :contentReference[oaicite:1]{index=1}
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+
+  scheduler:
+    build:
+      context: ./schedsolver
+    environment:
+      # Redis Streams config (defaults defined in README) :contentReference[oaicite:2]{index=2}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - REDIS_REQUEST_STREAM=schedule:requests
+      - REDIS_RESULT_STREAM=schedule:results
+      - REDIS_CONSUMER_GROUP=scheduler-group
+      - READ_BLOCK_MS=5000
+      - READ_COUNT=10
+      - RECONNECT_DELAY=5
+      # Solver tuning
+      - SOLVE_TIME_LIMIT=60
+      - CPUS=8
+      - WEIGHT_UNDERCOVERAGE=1000
+      - WEIGHT_DEVIATION=5
+      - WEIGHT_PREFERENCE=2
+    depends_on:
+      - redis
+    networks:
+      - backend
+
+volumes:
+  redis_data:
+
+networks:
+  backend:
+    driver: bridge
