@@ -114,32 +114,3 @@ def generate_shift_schedule(doctors, days, shifts,
     # Extract schedule
     schedule = {(i, j, k): int(solver.Value(x[(i, j, k)])) for i in doctors for j in days for k in shifts}
     return schedule
-
-
-if __name__ == '__main__':
-    # Example usage
-    doctors = ['Dr_A', 'Dr_B', 'Dr_C']
-    days = list(range(7))
-    shifts = ['morning', 'day', 'evening']
-    requirements = {(j, k): 2 for j in days for k in shifts}
-    availability = {(i, j, k): 1 for i in doctors for j in days for k in shifts}
-    shift_durations = {'morning': 8, 'day': 8, 'evening': 8}
-    max_weekly_hours = {i: 40 for i in doctors}
-    preferences = {(i, j, k): 1 for i in doctors for j in days for k in shifts}
-
-    schedule = generate_shift_schedule(
-        doctors, days, shifts,
-        requirements,
-        availability,
-        shift_durations,
-        max_weekly_hours,
-        min_rest_hours=11,
-        preferences=preferences,
-        alpha=1000,
-        beta=5,
-        gamma=1
-    )
-    for j in days:
-        print(f"Day {j}:")
-        for k in shifts:
-            print(f"  {k}: {[i for i in doctors if schedule[(i, j, k)]]}")
