@@ -31,6 +31,21 @@ services:
       - redis
     networks:
       - backend
+      
+  bot:
+    build:
+      context: ./schedbot
+      dockerfile: Dockerfile
+    environment:
+      - TELEGRAM_TOKEN=7971231857:AAEUeLr-N_td3M7IYOm4q00c1XucnTA3j1I
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - REDIS_REQUEST_STREAM=reschedule:trigger
+      - REDIS_RESULT_STREAM=schedule:results
+      - REDIS_CONSUMER_GROUP=bot_consumer
+    depends_on:
+      - redis
 
 volumes:
   redis_data:

@@ -1,0 +1,16 @@
+@startuml Proposed_Component
+component "Telegram-бот\n(интерфейс врачей)" as Bot
+component "Веб-интерфейс\nадминистратора" as AdminUI
+component "Модуль оптимизации\nрасписания" as Scheduler
+component "Интеграционный модуль\nс 1С (REST/SOAP)" as Integrator
+database "Центральная база\nрасписания" as ScheduleDB
+component "ERP: 1С:Предприятие" as ERP
+
+Bot --> Scheduler : запросы и\nподтверждения смен
+AdminUI --> Scheduler : ввод и\nправки графика
+Scheduler --> ScheduleDB : store/retrieve\ndata
+ScheduleDB --> Scheduler : supply current\ndata
+Scheduler --> Integrator : push updates
+Integrator --> ERP : SOAP/REST\nAPI-вызовы
+ERP --> Integrator : current schedule\n& meta
+@enduml

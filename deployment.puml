@@ -1,0 +1,13 @@
+@startuml Deployment_Diagram
+node "Устройство врача\n(смартфон/ПК)" as DocDevice
+node "Рабочее место\nадминистратора\n(ПК с 1С)" as AdminPC
+node "VPN/HTTPS\nСеть клиники" as Network
+node "Сервер микросервиса\nпланирования" as SchedulerServer
+node "Сервер базы данных\n1С:Предприятие" as OneCServer
+
+DocDevice --> Network : HTTPS (бот/API)
+AdminPC --> Network : HTTPS (веб UI/API)
+Network --> SchedulerServer : REST API
+SchedulerServer --> OneCServer : прямой доступ\nк БД / REST API
+SchedulerServer --> OneCServer : RPA для\nрутину
+@enduml

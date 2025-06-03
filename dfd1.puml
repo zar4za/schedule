@@ -1,0 +1,47 @@
+@startuml DFD_Repositioned
+' ============= Настройки =============
+skinparam backgroundColor #FFFFFF
+skinparam linetype ortho
+skinparam orthogonalRouting true
+skinparam nodesep 100
+skinparam ranksep 110
+skinparam rectangleRoundCorner 15
+skinparam defaultTextAlignment center
+
+' ======= Расположение узлов =======
+left to right direction
+
+actor "Врач\n(E1)"               as E1
+rectangle "P4: Уведомление\nучастников" as P4
+actor "Администратор\n(E2)"      as E2
+
+' Сделаем скрытую связь, чтобы P4 оказался строго посередине между врачом и админом
+E1 -[hidden]-> P4
+P4 -[hidden]-> E2
+
+rectangle "P1: Сбор\nданных"      as P1
+rectangle "P2: Оптимизация\nрасписания" as P2
+rectangle "P3: Интеграция\nс ERP" as P3
+folder    "D0: БД\nрасписания"    as D0
+database  "ERP 1С\n(E3)"           as ERP
+
+' Ещё пара невидимых связей, чтобы выровнять P1–P2–P3 и D0–ERP
+P1 -[hidden]-> P2
+P2 -[hidden]-> P3
+D0 -[hidden]-> ERP
+
+' ======= Потоки данных =======
+E1   --->  P4  : "Индивидуальный\nграфик"
+P4   -down->  E2  : "Сводный\nграфик"
+
+E2   -right-> P1  : "Заявки на отпуск\nи параметры"
+P1   -up->    E1  : "Запрос смен\nи доступность"
+
+P1   -right-> P2  : "Данные для\nоптимизации"
+P2   -up->    D0  : "Обновлённый\nграфик"
+D0   -down->  P2  : "Чтение для\nпроверки"
+
+P2   -right-> P3  : "График для\nERP"
+P3   -down->  ERP : "Передача/\nприём"
+
+@enduml
